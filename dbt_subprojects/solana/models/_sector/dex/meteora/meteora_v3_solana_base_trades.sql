@@ -9,7 +9,8 @@
     partition_by=['block_month'],
     incremental_strategy='merge',
     unique_key=['tx_id','outer_instruction_index','inner_instruction_index','tx_index','block_month'],
-    incremental_predicates = [incremental_predicate('DBT_INTERNAL_DEST.block_time')]
+    incremental_predicates = [incremental_predicate('DBT_INTERNAL_DEST.block_time')],
+    post_hook='delete from {{ this }} where token_bought_mint_address in (select token_mint_address from {{ ref("meteora_v3_solana_excluded_mints") }}) or token_sold_mint_address in (select token_mint_address from {{ ref("meteora_v3_solana_excluded_mints") }})'
   ) 
 }}
 
